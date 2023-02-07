@@ -1,5 +1,5 @@
 class Game < ApplicationRecord
-  has_many :user_games
+  has_many :user_games, dependent: :destroy
   has_many :users, through: :user_games
 
   enum state: { in_progress: 0, checkmate: 1, stalemate: 2 }
@@ -15,5 +15,30 @@ class Game < ApplicationRecord
                'b'
              end
     self.fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR #{prefix} KQkq - 0 1"
+  end
+  def set_pgn
+    self.pgn =
+'
+[Event "Casual Game"]
+[Site "Localhost"]
+[Date "01/20/23"]
+[EventDate "?"]
+[Round "?"]
+[Result "1-0"]
+[White "?"]
+[Black "?"]
+[ECO "?"]
+[WhiteElo "?"]
+[BlackElo "?"]
+[PlyCount "?"]
+'
+  end
+
+  def orientation(user)
+    if white_player_id == user.id
+      'white'
+    else
+      'black'
+    end
   end
 end
