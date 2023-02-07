@@ -1,6 +1,6 @@
 class GamesController < ApplicationController
   before_action :set_game, only: %i[ show edit update destroy ]
-
+  before_action :authenticate_user!
   # GET /games or /games.json
   def index
     @games = Game.all
@@ -21,7 +21,13 @@ class GamesController < ApplicationController
 
   # POST /games or /games.json
   def create
-    @game = Game.new(game_params)
+    assign_colors
+    @game = Game.new(
+      turn: :white,
+      state: :in_progress,
+      white_player_id: params[:game][:white_player_id],
+      black_player_id: params[:game][:black_player_id]
+    )
 
     respond_to do |format|
       if @game.save
@@ -65,6 +71,10 @@ class GamesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def game_params
-      params.require(:game).permit(:state, :turn, :fen, :pgn, :white_player_id, :black_player_id)
+      params.require(:game).permit(
+        :color,
+        :challenger_id,
+        :challenged_id
+      )
     end
 end
