@@ -31,6 +31,8 @@ class GamesController < ApplicationController
 
     respond_to do |format|
       if @game.save
+        user_game.create(game: @game, user_id: params[:game][:challenger_id])
+        user_game.create(game: @game, user_id: params[:game][:challenged_id])
         format.html { redirect_to game_url(@game), notice: "Game was successfully created." }
         format.json { render :show, status: :created, location: @game }
       else
